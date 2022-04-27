@@ -1,12 +1,8 @@
-import numpy as np
 from matplotlib import pyplot as plt
 from sklearn import datasets
-from sklearn import svm, metrics
+from sklearn import metrics
 from sklearn.model_selection import train_test_split
 from sklearn.cluster import KMeans
-from sklearn.preprocessing import MinMaxScaler
-from mlxtend.data import loadlocal_mnist
-from sklearn.metrics import homogeneity_score
 
 digits = datasets.load_digits()
 print(digits.data)
@@ -39,6 +35,8 @@ for i in range(64):
 
 plt.show()
 
+# Elbow method to choose K
+
 sse_1 = []
 k_rng1 = range(1,80)
 for k in k_rng1:
@@ -57,7 +55,8 @@ n_samples = len(digits.images)
 data = digits.images.reshape((n_samples, -1))
 X_train, X_test, y_train, y_test = train_test_split(data, digits.target, test_size=0.2, random_state = 45)
 
-    
+# clusters = 10 as we saw from above
+
 model = KMeans(n_clusters=10, random_state = 45)
 model.fit(X_train, y_train)
 
@@ -73,11 +72,11 @@ for i in range(10):
 plt.show()
 
 
-#Predicting labels
+#Predicting numbers
 predicted = model.fit_predict(X_test)
 
 ###############################################################################
-# visualize the first 4 test samples and show their predicted
+# visualize the first 8 test samples and show their predicted
 # digit value in the title.
 
 _, axes = plt.subplots(nrows=1, ncols=4, figsize=(10, 3))
