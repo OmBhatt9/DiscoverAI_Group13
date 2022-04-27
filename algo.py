@@ -1,6 +1,5 @@
 from matplotlib import pyplot as plt
-from sklearn import datasets
-from sklearn import metrics
+from sklearn import datasets, metrics
 from sklearn.model_selection import train_test_split
 from sklearn.cluster import KMeans
 
@@ -10,9 +9,11 @@ print(digits.target)
 
 plt.gray() 
 
+# displays pixel grid for 10th number
 plt.matshow(digits.images[10])
 
 plt.show()
+# displays the number as an int value
 print(digits.target[10])
 
 #Figure size (width, height)
@@ -35,8 +36,9 @@ for i in range(64):
 
 plt.show()
 
-# Elbow method to choose K
+# Elbow Method
 
+# Calculate and store sum of squared error for each k in k range
 sse_1 = []
 k_rng1 = range(1,80)
 for k in k_rng1:
@@ -44,6 +46,7 @@ for k in k_rng1:
     km.fit(digits.data)
     sse_1.append(km.inertia_)
 
+# display the sum of squared error with different k as a graph
 plt.figure()
 plt.xlabel('K')
 plt.ylabel('Sum of squared error')
@@ -53,33 +56,22 @@ plt.xticks(range(1, 80, 3))
 
 n_samples = len(digits.images)
 data = digits.images.reshape((n_samples, -1))
+
+# split the provided dataset into train and test groups
 X_train, X_test, y_train, y_test = train_test_split(data, digits.target, test_size=0.2, random_state = 45)
 
-# clusters = 10 as we saw from above
-
-model = KMeans(n_clusters=10, random_state = 45)
+# Use KMeans algorithm and separate into 10 clusters using X_train and y_train
+model = KMeans(n_clusters=10, tol=0.0001, random_state=45)
 model.fit(X_train, y_train)
 
 
-plt.figure(figsize=(8, 3))
-plt.suptitle('Cluster Center Images', fontsize=14, fontweight='bold')
-
-for i in range(10):
-  ax = fig.add_subplot(2, 5, 1 + i, xticks=[], yticks=[])
-
-  #Display images
-  ax.imshow(model.cluster_centers_[i].reshape((8, 8)),  cmap=plt.cm.binary)
-plt.show()
-
-
-#Predicting numbers
+#Predicting the handwritten value for X_test
 predicted = model.fit_predict(X_test)
 
-###############################################################################
-# visualize the first 8 test samples and show their predicted
-# digit value in the title.
 
-_, axes = plt.subplots(nrows=1, ncols=4, figsize=(10, 3))
+
+# Visualize first 8 test samples and show their predicted digit value
+_, axes = plt.subplots(nrows=1, ncols=8, figsize=(20, 3))
 for ax, image, prediction, actual in zip(axes, X_test, predicted, y_test):
     ax.set_axis_off()
     image = image.reshape(8, 8)
@@ -87,6 +79,8 @@ for ax, image, prediction, actual in zip(axes, X_test, predicted, y_test):
     ax.set_title(f"Prediction: {prediction} actual: {actual}")
 
 
+# :func:`~sklearn.metrics.classification_report` builds a text report showing
+# the main classification metrics.
 print(
     f"Classification report for classifier {model}:\n"
     f"{metrics.classification_report(y_test, predicted)}\n"
